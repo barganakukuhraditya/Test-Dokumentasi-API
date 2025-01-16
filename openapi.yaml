@@ -1,0 +1,661 @@
+openapi: 3.0.3
+info:
+  title: Lokasi API
+  description: API untuk mendapatkan data lokasi.
+  version: 1.0.0
+servers:
+  - url: https://asia-southeast2-awangga.cloudfunctions.net/idbiz
+paths:
+  /data/lokasi:
+    get:
+      tags:
+        - Lokasi
+      summary: Mendapatkan semua data lokasi
+      operationId: getLokasi
+      responses:
+        "200":
+          description: Daftar lokasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tempat'
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+                    example: "Error retrieving data"
+  /data/marker:
+    get:
+      tags:
+        - Marker
+      summary: Mendapatkan koordinat marker lokasi terbaru
+      operationId: getMarker
+      responses:
+        "200":
+          description: Data marker berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Koordinat'
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error retrieving data"
+  /data/warung:
+    get:
+      tags:
+        - Warung
+      summary: Mendapatkan semua data warung
+      operationId: getAllWarung
+      responses:
+        "200":
+          description: Daftar warung berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Warung'
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Response:
+                    type: string
+                    example: "Error retrieving data"
+  /data/markerwarung:
+    get:
+      tags:
+        - Koordinat Warung
+      summary: Mendapatkan koordinat marker warung lokasi terbaru
+      operationId: getMarkerWarung
+      responses:
+        "200":
+          description: Data marker berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Koordinat'
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error retrieving data"
+  /data/saran:
+    get:
+      tags:
+        - Saran
+      summary: Mendapatkan semua data saran
+      operationId: getAllSaran
+      responses:
+        "200":
+          description: Data saran berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Saran'
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error retrieving data"
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Akses Dashboard Admin
+      description: Endpoint untuk mengakses dashboard admin. Membutuhkan autentikasi JWT.
+      operationId: getAdminDashboard
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Akses dashboard berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Akses dashboard berhasil"
+                  admin_id:
+                    type: string
+                    description: ID admin
+                    example: "64b4f2a3c1a8f6d58b10e5a7"
+        "401":
+          description: Token tidak valid atau tidak ada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized: Missing or invalid token"
+        "403":
+          description: Akses ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Forbidden: Access denied"
+  /tempat-parkir:
+    post:
+      tags:
+        - Tempat Parkir
+      summary: Tambah Tempat Parkir
+      description: Endpoint untuk menambahkan data tempat parkir baru ke database.
+      operationId: postTempatParkir
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TempatParkir'
+              type: object
+              properties:
+                nama_tempat:
+                  type: string
+                  example: "Parkir Gratis Jakarta"
+                  description: Nama tempat parkir
+                lokasi:
+                  type: string
+                  example: "Jl. Merdeka No.1, Jakarta"
+                  description: Lokasi tempat parkir
+                fasilitas:
+                  type: string
+                  example: "Toilet, CCTV, Lahan Luas"
+                  description: Fasilitas yang tersedia
+                lon:
+                  type: number
+                  format: double
+                  example: 106.827183
+                  description: Longitude lokasi tempat parkir
+                lat:
+                  type: number
+                  format: double
+                  example: -6.175394
+                  description: Latitude lokasi tempat parkir
+                gambar:
+                  type: string
+                  example: "gambar1.jpg"
+                  description: Nama file gambar tempat parkir
+      responses:
+        "200":
+          description: Tempat parkir berhasil disimpan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Tempat parkir berhasil disimpan dengan ID: 64b4f2a3c1a8f6d58b10e5a7"
+        "400":
+          description: Data yang dikirim tidak valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /data/koordinat:
+    post:
+      tags:
+        - Koordinat
+      summary: Tambah Koordinat
+      operationId: postKoordinat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Koordinat'
+      responses:
+        "200":
+          description: Koordinat berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Markers updated"
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /data/tempat-warung:
+    post:
+      tags:
+        - Tempat-warung
+      summary: Tambah Warung
+      operationId: postWarung
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TempatWarung'
+      responses:
+        "200":
+          description: Warung berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Warung berhasil disimpan"
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /data/marker-warung:
+    post:
+      tags:
+        - Marker-warung
+      summary: Menambahkan koordinat marker warung
+      operationId: postKoordinatWarung
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Koordinat'
+      responses:
+        "200":
+          description: Koordinat marker warung berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Marker warung berhasil disimpan"
+        "400":
+          description: Terjadi kesalahan dalam permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /data/datasaran:
+    post:
+      tags:
+        - Saran
+      summary: Menyimpan saran pengguna
+      operationId: postSaran
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Saran'
+      responses:
+        "200":
+          description: Saran berhasil disimpan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    example: "Saran berhasil disimpan dengan ID: 60c72b2f9b1d8c11f5c3f9f7"
+        "400":
+          description: Terjadi kesalahan dalam permintaan atau data tidak valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /admin/login:
+    post:
+      tags:
+        - Admin
+      summary: Login admin untuk mendapatkan token
+      operationId: postLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Admin'
+      responses:
+        "200":
+          description: Login berhasil dan token diberikan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1N2I4NTkwNi1mMmFiLTQxZGQtODRkZS0yZDMwNzdiOGQxZDciLCJleHBpcmVkX3N0YXJ0Ijo2MjA1NzE0OUBXcCwsGiwiYS4oM3DK"
+        "400":
+          description: Permintaan tidak valid, misalnya input kosong atau data yang salah
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request body"
+        "401":
+          description: Kredensial tidak valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid credentials"
+        "500":
+          description: Kesalahan pada server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Could not generate token"      
+components:
+  schemas:
+    Tempat:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+          description: ID unik untuk tempat
+        nama_tempat:
+          type: string
+          description: Nama tempat
+        lokasi:
+          type: string
+          description: Lokasi tempat
+        fasilitas:
+          type: string
+          description: Fasilitas yang tersedia
+        lon:
+          type: number
+          format: float
+          description: Longitude lokasi
+        lat:
+          type: number
+          format: float
+          description: Latitude lokasi
+        gambar:
+          type: string
+          format: uri
+          description: URL gambar tempat
+        province:
+          type: string
+          description: Provinsi tempat
+        district:
+          type: string
+          description: Kabupaten atau kota tempat
+        sub_district:
+          type: string
+          description: Kecamatan tempat
+        village:
+          type: string
+          description: Desa atau kelurahan tempat
+    Koordinat:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+          description: ID unik untuk koordinat marker
+        markers:
+          type: array
+          description: Daftar koordinat marker
+          items:
+            type: array
+            items:
+              type: number
+              format: float
+    Warung:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+          description: ID unik untuk warung
+        nama_tempat:
+          type: string
+          description: Nama tempat warung
+        lokasi:
+          type: string
+          description: Lokasi warung
+        jam_buka:
+          type: string
+          description: Jam operasional warung
+        metode_pembayaran:
+          type: array
+          items:
+            type: string
+          description: Daftar metode pembayaran yang diterima
+        lon:
+          type: number
+          format: float
+          description: Longitude lokasi
+        lat:
+          type: number
+          format: float
+          description: Latitude lokasi
+        gambar:
+          type: string
+          format: uri
+          description: URL gambar warung
+        province:
+          type: string
+          description: Provinsi tempat warung
+        district:
+          type: string
+          description: Kabupaten atau kota tempat warung
+        sub_district:
+          type: string
+          description: Kecamatan tempat warung
+        village:
+          type: string
+          description: Desa atau kelurahan tempat warung
+    TempatWarung:
+      type: object
+      properties:
+        nama_tempat:
+          type: string
+          description: Nama tempat warung
+        lokasi:
+          type: string
+          description: Lokasi warung
+        jam_buka:
+          type: string
+          description: Jam operasional warung
+        metode_pembayaran:
+          type: array
+          items:
+            type: string
+          description: Daftar metode pembayaran yang diterima
+        lon:
+          type: number
+          format: float
+          description: Longitude lokasi
+        lat:
+          type: number
+          format: float
+          description: Latitude lokasi
+        gambar:
+          type: string
+          format: uri
+          description: URL gambar warung
+    Saran:
+      type: object
+      properties:
+        gmail:
+          type: string
+          description: Alamat email pengirim saran
+        nama:
+          type: string
+          description: Nama pengirim saran
+        saran_user:
+          type: string
+          description: Isi saran yang diberikan oleh pengguna
+        tanggal:
+          type: string
+          format: date-time
+          description: Tanggal dan waktu saran diberikan
+    TempatParkir:
+      type: object
+      properties:
+        nama_tempat:
+          type: string
+          description: Nama tempat parkir
+        lokasi:
+          type: string
+          description: Lokasi tempat parkir
+        fasilitas:
+          type: string
+          description: Fasilitas yang tersedia
+        lon:
+          type: number
+          format: double
+          description: Longitude lokasi tempat parkir
+        lat:
+          type: number
+          format: double
+          description: Latitude lokasi tempat parkir
+        gambar:
+          type: string
+          description: Nama file gambar tempat parkir
+    Admin:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Nama pengguna untuk login
+        password:
+          type: string
+          description: Kata sandi pengguna untuk login       
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
