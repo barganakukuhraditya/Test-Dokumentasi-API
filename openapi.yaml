@@ -4,9 +4,9 @@ info:
   description: API untuk mendapatkan data lokasi.
   version: 1.0.0
 servers:
-  - url: https://asia-southeast2-awangga.cloudfunctions.net/idbiz
+  - url: https://asia-southeast2-awangga.cloudfunctions.net
 paths:
-  /pembayaran/id:
+  idbiz/pembayaran/id:
     get:
       tags:
         - Pembayaran
